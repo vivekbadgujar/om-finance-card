@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Om Finance - Premium Interactive Card</title>
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* =========================================
+           CSS STYLES
+        ========================================= */
+        :root {
+            --navy: #0e1e3e;
+            --navy-light: #1a365d;
+            --gold: #c69b52;
+            --gold-light: #e6c587;
+            --bg-white: #ffffff;
+            --bg-offwhite: #f8fafc;
+            --text-dark: #222222;
+            --text-muted: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            /* Clean background for the webpage */
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Container Queries to ensure perfect scaling */
+        .card-wrapper {
+            width: 100%;
+            max-width: 850px;
+            container-type: inline-size;
+            perspective: 1000px;
+        }
+
+        /* --- Main Card Container (STRICTLY FIXED SIZE) --- */
+        .card {
+            width: 100%;
+            aspect-ratio: 1.85;
+            /* Strict fixed proportion */
+            background: var(--bg-white);
+            border-radius: 2.5cqw;
+            box-shadow: 0 4cqw 12cqw rgba(0, 0, 0, 0.15), 0 1cqw 3cqw rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            /* Prevent content overflow */
+            display: flex;
+        }
+
+        /* --- Background Textures & Glow --- */
+        .bg-pattern {
+            position: absolute;
+            top: -10cqw;
+            left: -10cqw;
+            width: 40cqw;
+            height: 40cqw;
+            border-radius: 50%;
+            background: repeating-radial-gradient(circle at center, transparent 0, transparent 1cqw, rgba(0, 0, 0, 0.015) 1cqw, rgba(0, 0, 0, 0.015) 1.5cqw);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-glow {
+            position: absolute;
+            bottom: -20cqw;
+            right: -20cqw;
+            width: 60cqw;
+            height: 60cqw;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(198, 155, 82, 0.05) 0%, transparent 70%);
+            z-index: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Make glow deeper when in an internal view */
+        .card.internal-active .bg-glow {
+            background: radial-gradient(circle, rgba(14, 30, 62, 0.03) 0%, transparent 70%);
+        }
+
+        /* --- View Manager System --- */
+        .view-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            /* Take full fixed height */
+        }
+
+        .view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Fixed inside the card */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+            display: flex;
+        }
+
+        .view.active {
+            visibility: visible;
+            opacity: 1;
+            z-index: 10;
+        }
+
+        /* Scrollbar styling for internal views if content overflows */
+        .view.expanded-view {
+            overflow-y: auto;
+            flex-direction: column;
+            padding: 4cqw 5cqw;
+            background: linear-gradient(135deg, var(--bg-white) 0%, var(--bg-offwhite) 100%);
+        }
+
+        .expanded-view::-webkit-scrollbar {
+            width: 0.8cqw;
+        }
+
+        .expanded-view::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 1cqw;
+        }
+
+        .expanded-view::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 1cqw;
+        }
+
+        /* =========================================
+           1. FRONT VIEW STYLES
+        ========================================= */
+        #view-front {
+            flex-direction: row;
+        }
+
+        /* Left Side */
+        .left-section {
+            width: 38%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 5;
+            background: var(--bg-white);
+            /* White background for the top area */
+            border-top-left-radius: 2.5cqw;
+            border-bottom-left-radius: 2.5cqw;
+        }
+
+        /* Branding Area - Top 25% */
+        .brand {
+            height: 25%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .brand-name {
+            display: flex;
+            align-items: center;
+            gap: 0.6cqw;
+            line-height: 1.1;
+            margin-bottom: 0.5cqw;
+        }
+
+        .om-logo {
+            font-size: 4cqw;
+            color: var(--gold);
+            line-height: 1;
+            font-family: sans-serif;
+        }
+
+        .om-text {
+            font-size: 4cqw;
+            font-weight: 700;
+            color: var(--navy);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .consultant-text {
+            font-size: 4cqw;
+            font-weight: 600;
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .tagline {
+            font-size: 1.05cqw;
+            font-weight: 600;
+            color: var(--navy);
+            letter-spacing: 0.05cqw;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        /* Image Area - Bottom 75% */
+        .left-image-wrapper {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 75%;
+            z-index: 1;
+            overflow: hidden;
+            border-bottom-left-radius: 2.5cqw;
+        }
+
+        .left-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            position: relative;
+            z-index: 1;
+            /* Smooth white fade transition from top into image */
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 1) 20%);
+            mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 1) 20%);
+        }
+
+        .divider {
+            position: absolute;
+            left: 38%;
+            top: 6cqw;
+            bottom: 10cqw;
+            width: 0.15cqw;
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1) 15%, rgba(0, 0, 0, 0.1) 85%, transparent);
+            z-index: 10;
+        }
+
+        /* Right Side */
+        .right-section {
+            width: 62%;
+            height: 100%;
+            padding: 3cqw 4cqw 5.5cqw 5cqw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2cqw;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* Profile Header (Clean text only) */
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .name {
+            font-size: 3.5cqw;
+            color: var(--navy);
+            font-weight: 700;
+            margin-bottom: 0.2cqw;
+            line-height: 1.1;
+        }
+
+        .title {
+            font-size: 1.5cqw;
+            color: var(--gold);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05cqw;
+        }
+
+        .tagline-highlight {
+            font-size: 1.2cqw;
+            color: var(--navy-light);
+            font-weight: 500;
+            margin-top: 0.5cqw;
+        }
+
+        /* Direct Contact Information (Primary Focus) */
+        .contact-info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1cqw;
+            width: 95%;
+        }
+
+        .contact-row {
+            display: flex;
+            gap: 2.5cqw;
+            align-items: center;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1cqw;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .contact-item:hover {
+            opacity: 0.8;
+        }
+
+        .contact-item i {
+            width: 2.8cqw;
+            height: 2.8cqw;
+            background: var(--navy);
+            color: var(--bg-white);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2cqw;
+            box-shadow: 0 0.2cqw 0.5cqw rgba(14, 30, 62, 0.2);
+            flex-shrink: 0;
+        }
+
+        .contact-item.whatsapp i {
+            background: rgba(37, 211, 102, 0.1);
+            color: #25D366;
+            border: 1px solid rgba(37, 211, 102, 0.25);
+            box-shadow: 0 0 10px rgba(37, 211, 102, 0.1);
+        }
+
+        .contact-item span {
+            font-size: 1.2cqw;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .address-block {
+            display: flex;
+            align-items: flex-start;
+            gap: 1cqw;
+            margin-top: 0.2cqw;
+        }
+
+        .address-block i {
+            width: 2.8cqw;
+            height: 2.8cqw;
+            background: var(--navy);
+            color: var(--bg-white);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2cqw;
+            box-shadow: 0 0.2cqw 0.5cqw rgba(14, 30, 62, 0.2);
+            flex-shrink: 0;
+            margin-top: 0.2cqw;
+        }
+
+        .address-text {
+            font-size: 1.15cqw;
+            color: var(--text-dark);
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        /* Secondary Interactive Menu Buttons (Inline Pill Style) */
+        .action-menu-inline.secondary-menu {
+            display: flex;
+            gap: 1.2cqw;
+            margin-bottom: 0;
+            width: 95%;
+            justify-content: space-between;
+        }
+
+        .secondary-menu .action-btn-small {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5cqw;
+            padding: 0.7cqw 0.5cqw;
+            background: transparent;
+            border: 1px solid rgba(14, 30, 62, 0.15);
+            border-radius: 0.6cqw;
+            font-size: 1.1cqw;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .secondary-menu .action-btn-small:hover {
+            background: rgba(198, 155, 82, 0.05);
+            color: var(--navy);
+            border-color: var(--gold);
+        }
+
+        /* Trust Banner (Bottom Right) */
+        .gold-banner {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 66%;
+            height: 4.5cqw;
+            background: linear-gradient(to right, var(--gold), var(--gold-light));
+            border-top-left-radius: 2.5cqw;
+            display: flex;
+            align-items: center;
+            padding-left: 2.5cqw;
+            box-shadow: -0.5cqw -0.5cqw 1.5cqw rgba(0, 0, 0, 0.06);
+            z-index: 20;
+        }
+
+        .shield-container {
+            width: 2cqw;
+            height: 2.2cqw;
+            background: var(--navy);
+            border-radius: 0.4cqw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1cqw;
+            flex-shrink: 0;
+        }
+
+        .shield-container i {
+            color: var(--gold);
+            font-size: 1.1cqw;
+        }
+
+        .gold-banner span {
+            color: var(--text-dark);
+            font-size: 1.1cqw;
+            font-weight: 500;
+        }
+
+        /* =========================================
+           2. INTERNAL VIEWS STYLES
+        ========================================= */
+        .back-btn {
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            gap: 0.8cqw;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.4cqw;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 1.5cqw;
+            padding: 0.5cqw 0;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: var(--navy);
+            transform: translateX(-0.3cqw);
+        }
+
+        .section-title {
+            font-size: 2.5cqw;
+            color: var(--navy);
+            font-weight: 700;
+            margin-bottom: 2cqw;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5cqw;
+            left: 0;
+            width: 4cqw;
+            height: 0.3cqw;
+            background: var(--gold);
+            border-radius: 1cqw;
+        }
+
+        /* --- Services List --- */
+        .detailed-services {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5cqw;
+            padding-bottom: 2cqw;
+        }
+
+        .service-item-card {
+            background: var(--bg-white);
+            padding: 1.8cqw 2cqw;
+            border-radius: 1.2cqw;
+            box-shadow: 0 0.5cqw 2cqw rgba(0, 0, 0, 0.05);
+            border-left: 0.3cqw solid var(--gold);
+            transition: transform 0.3s ease;
+        }
+
+        .service-item-card:hover {
+            transform: translateY(-0.3cqw);
+            box-shadow: 0 1cqw 3cqw rgba(0, 0, 0, 0.08);
+        }
+
+        .service-item-card i {
+            font-size: 1.8cqw;
+            color: var(--gold);
+            margin-bottom: 0.8cqw;
+            display: block;
+        }
+
+        .service-item-card h4 {
+            font-size: 1.25cqw;
+            color: var(--navy);
+            margin-bottom: 0.4cqw;
+            font-weight: 700;
+        }
+
+        .service-item-card p {
+            font-size: 1.05cqw;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* --- About Section --- */
+        .about-content {
+            background: var(--bg-white);
+            padding: 2cqw 3cqw;
+            border-radius: 1.2cqw;
+            box-shadow: 0 0.5cqw 2cqw rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            margin-bottom: 2cqw;
+        }
+
+        .about-content p {
+            font-size: 1.35cqw;
+            color: var(--text-dark);
+            line-height: 1.7;
+            margin-bottom: 1cqw;
+        }
+
+        /* --- Bank Partners Section --- */
+        .bank-partners-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5cqw;
+            margin-top: 1cqw;
+            padding-bottom: 2cqw;
+        }
+
+        .bank-card {
+            display: flex;
+            align-items: center;
+            gap: 1cqw;
+            background: var(--bg-white);
+            padding: 1.5cqw 2cqw;
+            border-radius: 1cqw;
+            font-size: 1.4cqw;
+            font-weight: 600;
+            color: var(--navy);
+            border: 1px solid rgba(198, 155, 82, 0.3);
+            box-shadow: 0 0.5cqw 1.5cqw rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease;
+        }
+
+        .bank-card:hover {
+            transform: translateY(-0.2cqw);
+            border-color: var(--gold);
+        }
+
+        .bank-card i {
+            color: var(--gold);
+            font-size: 1.5cqw;
+        }
+
+        /* =========================================
+           ANIMATIONS
+        ========================================= */
+        @keyframes slideDownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-2cqw);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: slideDownFade 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
+        }
+
+        .delay-1 {
+            animation-delay: 0.05s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.15s;
+        }
+
+        .delay-4 {
+            animation-delay: 0.2s;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card-wrapper">
+        <!-- Main Fixed-Size Card -->
+        <div class="card" id="visitingCard">
+            <div class="bg-pattern"></div>
+            <div class="bg-glow"></div>
+
+            <div class="view-container">
+
+                <!-- =========================================
+                     FRONT VIEW (Default)
+                ========================================= -->
+                <div class="view front-view active" id="view-front" style="opacity: 1;">
+                    <!-- Left Branding Area -->
+                    <div class="left-section">
+                        <div class="brand">
+                            <div class="brand-name">
+                                <span class="om-logo">ॐ</span>
+                                <span class="om-text">Om</span>
+                                <span class="consultant-text">Finance</span>
+                            </div>
+                            <div class="tagline">TRUSTED LOAN &<br>PROPERTY CONSULTANT</div>
+                        </div>
+                        <div class="left-image-wrapper">
+                            <!-- PLACEHOLDER FOR PERSONAL/BUSINESS PHOTO -->
+                            <!-- Recommend using a professional portrait of the owner here -->
+                            <img src="https://i.ibb.co/3mzX3ZJr/PAPA-jpg.jpg" alt="PAPA-jpg" border="0"
+                                style="pointer-events: none;">
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- Right Profile & Content -->
+                    <div class="right-section">
+                        <!-- Profile Header (Clean text only, no image) -->
+                        <div class="profile-header">
+                            <h2 class="name">Vijay Badgujar</h2>
+                            <h3 class="title">CONSULTANT</h3>
+                            <p class="tagline-highlight">Fast & Trusted Loan and Property Solutions</p>
+                        </div>
+
+                        <!-- Direct Contact Information (Always visible, primary focus) -->
+                        <div class="contact-info-list">
+                            <!-- Top Row: Phone and WhatsApp -->
+                            <div class="contact-row">
+                                <a href="tel:+919879055003" class="contact-item">
+                                    <i class="fa-solid fa-phone"></i>
+                                    <span>+91 9879055003</span>
+                                </a>
+                                <a href="https://wa.me/919879055003" target="_blank" rel="noopener noreferrer"
+                                    class="contact-item whatsapp">
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                    <span>+91 9879055003</span>
+                                </a>
+                            </div>
+                            <!-- Middle Row: Email -->
+                            <div class="contact-row">
+                                <a href="mailto:vijaybadgujar20@gmail.com" class="contact-item">
+                                    <i class="fa-solidvijaybadgujar20@gmail.com fa-envelope"></i>
+                                    <span>vijaybadgujar20@gmail.com</span>
+                                </a>
+                            </div>
+                            <!-- Bottom Row: Address -->
+                            <div class="address-block">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <div class="address-text">
+                                    Tirth Bhoomi Residency<br>
+                                    Near Nikol Dmart<br>
+                                    Raspan Char Rasta<br>
+                                    Nikol, Ahmedabad - 382350
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Secondary Action Buttons (Placed below contact info, non-dominant) -->
+                        <div class="action-menu-inline secondary-menu">
+                            <button class="action-btn-small" onclick="switchView('view-services')">
+                                Our Services
+                            </button>
+                            <button class="action-btn-small" onclick="switchView('view-about')">
+                                About Us
+                            </button>
+                            <button class="action-btn-small" onclick="switchView('view-banks')">
+                                Bank Partners
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Trust Banner -->
+                    <div class="gold-banner">
+                        <div class="shield-container">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <span>Associated with Axis Bank, SBI, Bank of Baroda & other leading banks.</span>
+                    </div>
+                </div>
+
+                <!-- =========================================
+                     SERVICES VIEW (Internal View)
+                ========================================= -->
+                <div class="view expanded-view" id="view-services">
+                    <button class="back-btn" onclick="switchView('view-front')">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Card
+                    </button>
+
+                    <h2 class="section-title animate-in delay-1">Our Services</h2>
+
+                    <div class="detailed-services">
+                        <div class="service-item-card animate-in delay-2">
+                            <i class="fa-solid fa-house"></i>
+                            <h4>Home Loan Assistance</h4>
+                            <p>Helping clients secure home loans with low interest rates and fast approval.</p>
+                        </div>
+                        <div class="service-item-card animate-in delay-3">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <h4>Personal Loan Services</h4>
+                            <p>Quick and hassle-free personal loans for urgent financial needs.</p>
+                        </div>
+                        <div class="service-item-card animate-in delay-4">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <h4>Business Loan Solutions</h4>
+                            <p>Providing financial support to help businesses grow and expand.</p>
+                        </div>
+                        <div class="service-item-card animate-in delay-5">
+                            <i class="fa-solid fa-building"></i>
+                            <h4>Loan Against Property (LAP)</h4>
+                            <p>Get funds by using property as security with flexible repayment options.</p>
+                        </div>
+                        <div class="service-item-card animate-in delay-5">
+                            <i class="fa-solid fa-hand-holding-dollar"></i>
+                            <h4>Mortgage Loan Assistance</h4>
+                            <p>Complete guidance for mortgage-based loan solutions.</p>
+                        </div>
+                        <div class="service-item-card animate-in delay-5">
+                            <i class="fa-solid fa-money-bill-transfer"></i>
+                            <h4>Balance Transfer & Top-Up Loans</h4>
+                            <p>Reduce interest burden or get additional funds on existing loans.</p>
+                        </div>
+                        <div class="service-item-card animate-in delay-5">
+                            <i class="fa-solid fa-file-signature"></i>
+                            <h4>Property Documentation Support</h4>
+                            <p>Assistance with all types of property paperwork and documentation.</p>
+                        </div>
+                        <div class="service-item-card animate-in delay-5">
+                            <i class="fa-solid fa-file-shield"></i>
+                            <h4>Legal & Technical Verification</h4>
+                            <p>Ensuring property is legally clear and technically verified.</p>
+                        </div>
+                        <div class="service-item-card animate-in delay-5">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                            <h4>Loan File Processing & Consultation</h4>
+                            <p>End-to-end support from loan application to approval.</p>
+                        </div>
+                        <div class="service-item-card animate-in delay-5">
+                            <i class="fa-solid fa-handshake"></i>
+                            <h4>Bank Coordination & Approval Support</h4>
+                            <p>Handling coordination with banks for faster loan approval.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =========================================
+                     ABOUT VIEW (Internal View)
+                ========================================= -->
+                <div class="view expanded-view" id="view-about">
+                    <button class="back-btn" onclick="switchView('view-front')">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Card
+                    </button>
+
+                    <h2 class="section-title animate-in delay-1">About Us</h2>
+
+                    <div class="about-content animate-in delay-2">
+                        <p>At <strong>Om Consultant</strong>, we believe that every financial decision should be simple,
+                            transparent, and stress-free. With years of hands-on experience in loan and property
+                            consultancy, we guide our clients at every step — from understanding their needs to final
+                            approval and documentation.</p>
+                        <p>We specialize in home loans, personal loans, and business loans, along with complete
+                            assistance in property-related paperwork. Our strong associations with trusted banks like
+                            Axis Bank, SBI, Bank of Baroda, and others help us provide faster processing, better
+                            options, and reliable support.</p>
+                        <p>For us, every client is more than just a transaction. We focus on building long-term
+                            relationships through honesty, clear guidance, and dedicated service. Whether it’s your
+                            dream home, urgent financial need, or business growth, Om Consultant stands with you to make
+                            the process smooth, secure, and successful.</p>
+                    </div>
+                </div>
+
+                <!-- =========================================
+                     BANK PARTNERS VIEW (Internal View)
+                ========================================= -->
+                <div class="view expanded-view" id="view-banks">
+                    <button class="back-btn" onclick="switchView('view-front')">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Card
+                    </button>
+
+                    <h2 class="section-title animate-in delay-1">Our Associations</h2>
+
+                    <div class="bank-partners-grid animate-in delay-2">
+                        <div class="bank-card">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Axis Bank</span>
+                        </div>
+                        <div class="bank-card">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>State Bank of India</span>
+                        </div>
+                        <div class="bank-card">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Bank of Baroda</span>
+                        </div>
+                        <div class="bank-card">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>HDFC Bank</span>
+                        </div>
+                        <div class="bank-card">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>ICICI Bank</span>
+                        </div>
+                        <div class="bank-card">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Punjab National Bank</span>
+                        </div>
+                        <div class="bank-card">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Kotak Mahindra Bank</span>
+                        </div>
+                        <div class="bank-card">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Canara Bank</span>
+                        </div>
+                        <div class="bank-card">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Union Bank of India</span>
+                        </div>
+                        <div class="bank-card">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>IndusInd Bank</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================= -->
+    <script>
+        function switchView(viewId) {
+            const card = document.getElementById('visitingCard');
+            const activeView = document.querySelector('.view.active');
+
+            if (activeView) {
+                // 1. Fade out current view
+                activeView.style.opacity = '0';
+
+                setTimeout(() => {
+                    activeView.classList.remove('active');
+
+                    // 2. Prepare new view
+                    const targetView = document.getElementById(viewId);
+                    targetView.classList.add('active');
+
+                    // 3. Mark if card is currently showing an internal view
+                    if (viewId === 'view-front') {
+                        card.classList.remove('internal-active');
+                    } else {
+                        card.classList.add('internal-active');
+                    }
+
+                    // 4. Fade in new view & trigger internal animations
+                    setTimeout(() => {
+                        targetView.style.opacity = '1';
+
+                        if (viewId !== 'view-front') {
+                            const animatedElements = targetView.querySelectorAll('.animate-in');
+                            animatedElements.forEach(el => {
+                                el.style.animation = 'none';
+                                el.offsetHeight; // force reflow to restart animation
+                                el.style.animation = null;
+                            });
+                        }
+                    }, 50);
+
+                }, 250); // Match transition duration
+            }
+        }
+    </script>
+</body>
+
+</html>
