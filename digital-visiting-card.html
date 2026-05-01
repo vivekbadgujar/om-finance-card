@@ -617,6 +617,214 @@
         .delay-4 {
             animation-delay: 0.2s;
         }
+
+        /* =========================================
+           MOBILE RESPONSIVE (Max-width: 768px)
+        ========================================= */
+        @media (max-width: 768px) {
+            .card-wrapper {
+                width: 95%;
+                max-width: 100%;
+            }
+            .card {
+                aspect-ratio: auto;
+                flex-direction: column;
+                height: auto;
+                border-radius: 20px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+            }
+            .bg-pattern {
+                width: 150px; height: 150px; top: -20px; left: -20px;
+                background: repeating-radial-gradient(circle at center, transparent 0, transparent 4px, rgba(0, 0, 0, 0.015) 4px, rgba(0, 0, 0, 0.015) 6px);
+            }
+            .bg-glow {
+                width: 200px; height: 200px; bottom: -30px; right: -30px;
+            }
+            .view-container {
+                height: auto;
+            }
+            .view {
+                position: absolute;
+                height: 100%;
+            }
+            .view.active {
+                position: relative;
+                height: auto;
+                overflow: visible;
+            }
+            .view.expanded-view {
+                padding: 25px 20px;
+                border-radius: 20px;
+            }
+            #view-front {
+                flex-direction: column;
+            }
+            
+            /* Left Section */
+            .left-section {
+                width: 100%;
+                border-radius: 20px 20px 0 0;
+            }
+            .brand {
+                height: auto;
+                padding: 30px 20px 10px 20px;
+            }
+            .om-logo, .om-text, .consultant-text {
+                font-size: 28px;
+            }
+            .tagline {
+                font-size: 12px;
+                margin-top: 5px;
+                letter-spacing: 1px;
+            }
+            .left-image-wrapper {
+                position: relative;
+                height: 350px;
+                border-radius: 0;
+            }
+            .left-image-wrapper img {
+                height: 100%;
+                width: 100%;
+                object-fit: cover;
+                object-position: top center;
+                -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 85%, transparent 100%);
+                mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 85%, transparent 100%);
+            }
+            .divider {
+                display: none;
+            }
+            
+            /* Right Section */
+            .right-section {
+                width: 100%;
+                padding: 10px 20px 30px 20px;
+                gap: 25px;
+            }
+            .name {
+                font-size: 28px;
+            }
+            .title {
+                font-size: 14px;
+                letter-spacing: 1px;
+            }
+            .tagline-highlight {
+                font-size: 15px;
+                margin-top: 5px;
+            }
+            
+            /* Contact List */
+            .contact-info-list {
+                width: 100%;
+                gap: 15px;
+            }
+            .contact-row {
+                gap: 15px;
+            }
+            .contact-item i, .address-block i {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+            .contact-item span {
+                font-size: 16px;
+            }
+            .address-text {
+                font-size: 15px;
+                line-height: 1.5;
+            }
+            
+            /* Action Buttons */
+            .action-menu-inline.secondary-menu {
+                flex-direction: column;
+                width: 100%;
+                gap: 15px;
+            }
+            .secondary-menu .action-btn-small {
+                width: 100%;
+                padding: 14px;
+                font-size: 16px;
+                border-radius: 10px;
+            }
+            
+            /* Gold Banner */
+            .gold-banner {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 20px;
+                border-radius: 0 0 20px 20px;
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-start;
+            }
+            .gold-banner span {
+                font-size: 14px;
+                line-height: 1.5;
+            }
+            .shield-container {
+                width: 30px;
+                height: 30px;
+                margin-right: 15px;
+            }
+            .shield-container i {
+                font-size: 16px;
+            }
+            
+            /* Internal Views Overrides */
+            .back-btn {
+                font-size: 16px;
+                margin-bottom: 20px;
+            }
+            .section-title {
+                font-size: 26px;
+                margin-bottom: 25px;
+            }
+            .section-title::after {
+                width: 50px;
+                height: 4px;
+                bottom: -8px;
+            }
+            .detailed-services {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .service-item-card {
+                padding: 20px;
+                border-radius: 15px;
+                border-left-width: 4px;
+            }
+            .service-item-card i {
+                font-size: 28px;
+                margin-bottom: 12px;
+            }
+            .service-item-card h4 {
+                font-size: 18px;
+                margin-bottom: 8px;
+            }
+            .service-item-card p {
+                font-size: 15px;
+            }
+            .about-content {
+                padding: 20px;
+                border-radius: 15px;
+            }
+            .about-content p {
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+            .bank-partners-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .bank-card {
+                padding: 18px;
+                border-radius: 12px;
+                font-size: 16px;
+            }
+            .bank-card i {
+                font-size: 22px;
+            }
+        }
     </style>
 </head>
 
