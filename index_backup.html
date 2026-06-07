@@ -47,7 +47,7 @@
         /* Container Queries to ensure perfect scaling */
         .card-wrapper {
             width: 100%;
-            max-width: 450px;
+            max-width: 850px;
             container-type: inline-size;
             perspective: 1000px;
         }
@@ -55,7 +55,7 @@
         /* --- Main Card Container (STRICTLY FIXED SIZE) --- */
         .card {
             width: 100%;
-            aspect-ratio: 9/16;
+            aspect-ratio: 1.85;
             /* Strict fixed proportion */
             background: var(--bg-white);
             border-radius: 2.5cqw;
@@ -621,14 +621,13 @@
         /* =========================================
            MOBILE RESPONSIVE (Max-width: 768px)
         ========================================= */
-        @media (max-width: 4000px) {
+        @media (max-width: 768px) {
             .card-wrapper {
                 width: 95%;
-                max-width: 450px;
-                margin: 0 auto;
+                max-width: 100%;
             }
             .card {
-                aspect-ratio: 9/16;
+                aspect-ratio: auto;
                 flex-direction: column;
                 height: auto;
                 border-radius: 20px;
@@ -1123,4 +1122,3 @@
 </body>
 
 </html>
-
