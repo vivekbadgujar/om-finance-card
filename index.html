@@ -736,15 +736,23 @@
             
             /* Action Buttons */
             .action-menu-inline.secondary-menu {
-                flex-direction: column;
+                flex-direction: row;
                 width: 100%;
-                gap: 15px;
+                gap: 10px;
+                padding: 15px 20px;
+                background: var(--bg-white);
+                border-top: 1px solid rgba(0, 0, 0, 0.05);
+                border-radius: 0 0 20px 20px;
+                margin-top: auto;
             }
             .secondary-menu .action-btn-small {
-                width: 100%;
-                padding: 14px;
-                font-size: 16px;
-                border-radius: 10px;
+                flex: 1;
+                padding: 12px 5px;
+                font-size: 13px;
+                border-radius: 8px;
+                background: rgba(198, 155, 82, 0.05);
+                color: var(--navy);
+                border: 1px solid var(--gold);
             }
             
             /* Gold Banner */
@@ -752,8 +760,8 @@
                 position: relative;
                 width: 100%;
                 height: auto;
-                padding: 20px;
-                border-radius: 0 0 20px 20px;
+                padding: 15px 20px;
+                border-radius: 0;
                 flex-direction: row;
                 align-items: center;
                 justify-content: flex-start;
@@ -905,18 +913,6 @@
                             </div>
                         </div>
 
-                        <!-- Secondary Action Buttons (Placed below contact info, non-dominant) -->
-                        <div class="action-menu-inline secondary-menu">
-                            <button class="action-btn-small" onclick="switchView('view-services')">
-                                Our Services
-                            </button>
-                            <button class="action-btn-small" onclick="switchView('view-about')">
-                                About Us
-                            </button>
-                            <button class="action-btn-small" onclick="switchView('view-banks')">
-                                Bank Partners
-                            </button>
-                        </div>
                     </div>
 
                     <!-- Bottom Trust Banner -->
@@ -925,6 +921,19 @@
                             <i class="fa-solid fa-shield-halved"></i>
                         </div>
                         <span>Associated with Axis Bank, SBI, Bank of Baroda & other leading banks.</span>
+                    </div>
+
+                    <!-- Secondary Action Buttons (Placed below contact info, non-dominant) -->
+                    <div class="action-menu-inline secondary-menu">
+                        <button class="action-btn-small" onclick="switchView('view-services')">
+                            Our Services
+                        </button>
+                        <button class="action-btn-small" onclick="switchView('view-about')">
+                            About Us
+                        </button>
+                        <button class="action-btn-small" onclick="switchView('view-banks')">
+                            Bank Partners
+                        </button>
                     </div>
                 </div>
 
